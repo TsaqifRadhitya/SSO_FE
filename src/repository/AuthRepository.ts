@@ -5,10 +5,6 @@ import { UnautencicatedException } from "../errors/UnautenticatedException";
 import { BaseRepository } from "./BaseRepository";
 
 export class AuthRepository extends BaseRepository {
-    constructor() {
-        super()
-    }
-
     async Login(data: z.infer<typeof LoginValidator>): Promise<string> {
         try {
             const loginRequest = await Axios.post("/api/auth/login", {

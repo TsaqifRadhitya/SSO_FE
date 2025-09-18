@@ -11,6 +11,7 @@ import { Response } from "@/src/types/getServerSidePropsReturn";
 import { authenticatedServerFetch } from "@/src/utils/fetch";
 import { UserType } from "@/src/types/User";
 import Head from "next/head";
+import BaseLayout from "@/src/layouts/BaseLayout";
 
 type loginServerSidePropsType = {
   application_key?: string;
@@ -93,12 +94,12 @@ export default function LoginPage({
         return;
       }
       setNotification({ message: "Login Success", type: "Success" });
-        router.push("/");
+      router.push("/");
     });
   };
 
   return (
-    <main className="w-full min-h-screen flex items-center justify-center p-4">
+    <BaseLayout className="flex items-center justify-center p-4">
       <Head>
         <title>SSO - Login Page</title>
       </Head>
@@ -156,6 +157,6 @@ export default function LoginPage({
           {isSubmited ? <Spinner size={2} /> : "Login"}
         </button>
       </div>
-    </main>
+    </BaseLayout>
   );
 }

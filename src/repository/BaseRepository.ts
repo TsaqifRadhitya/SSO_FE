@@ -11,7 +11,7 @@ export abstract class BaseRepository {
     private static isTokenFetching: boolean = false;
     private static retryLimit = 1;
 
-    protected async ensureToken(): Promise<void> {
+    async ensureToken(): Promise<void> {
         if (!BaseRepository.token && !BaseRepository.isTokenFetching) {
             BaseRepository.isTokenFetching = true;
             try {
@@ -41,7 +41,6 @@ export abstract class BaseRepository {
         retryCount = 0
     ): Promise<T> {
         await this.ensureToken();
-
         const headers: Record<string, string> = {};
         if (BaseRepository.token) {
             headers["Authorization"] = `Bearer ${BaseRepository.token}`;
@@ -73,7 +72,7 @@ export abstract class BaseRepository {
                 switch (status) {
                     case 401:
                         if (retryCount < BaseRepository.retryLimit) {
-                            BaseRepository.token = null; // reset token
+                            BaseRepository.token = null;
                             return this.authenticatedClientFetch<T>(url, method, payload, retryCount + 1);
                         }
                         throw new UnautencicatedException();

@@ -1,3 +1,4 @@
+import BaseLayout from "@/src/layouts/BaseLayout";
 import { ApplicationType } from "@/src/types/Application";
 import { Response } from "@/src/types/getServerSidePropsReturn";
 import { formatDate } from "@/src/utils/DateFormaterUtils";
@@ -54,12 +55,12 @@ export default function ApplicationPage({
   };
 
   return (
-    <main className="w-full min-h-screen text-white p-4 sm:p-8">
+    <BaseLayout className="text-white">
       <Head>
         <title>SSO - Application Console</title>
       </Head>
 
-      <div className="w-full max-w-7xl mx-auto">
+      <div className="w-full mx-auto">
         <header className="mb-8 flex flex-col sm:flex-row justify-between sm:items-center">
           <div>
             <h1 className="text-4xl font-bold text-white">
@@ -69,7 +70,10 @@ export default function ApplicationPage({
               Manage all applications connected to your SSO.
             </p>
           </div>
-          <Link href="/application/create" className="mt-4 sm:mt-0 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition-colors duration-200">
+          <Link
+            href="/application/create"
+            className="mt-4 sm:mt-0 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition-colors duration-200"
+          >
             + Create New Application
           </Link>
         </header>
@@ -80,7 +84,7 @@ export default function ApplicationPage({
             placeholder="Search by application name..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full max-w-sm bg-gray-700 text-white rounded-lg px-4 py-2 placeholder:text-gray-400 border border-transparent focus:border-cyan-500 focus:ring-cyan-500 transition"
+            className="w-full bg-gray-700 max-w-xs text-white rounded-lg px-4 py-2 placeholder:text-gray-400 border border-transparent focus:border-cyan-500 focus:ring-cyan-500 transition"
           />
         </div>
 
@@ -149,6 +153,6 @@ export default function ApplicationPage({
           </div>
         </div>
       </div>
-    </main>
+    </BaseLayout>
   );
 }

@@ -2,6 +2,7 @@
 
 import { useAuth } from "@/src/hooks/useAuth";
 import { useNotification } from "@/src/hooks/useNotification";
+import BaseLayout from "@/src/layouts/BaseLayout";
 import { Response } from "@/src/types/getServerSidePropsReturn";
 import { UserType } from "@/src/types/User";
 import { formatDate } from "@/src/utils/DateFormaterUtils";
@@ -114,12 +115,12 @@ const accessLogs = [
 ];
 
 export const getServerSideProps: GetServerSideProps<
-  Response<{data : UserType}>
+  Response<{ data: UserType }>
 > = async (ctx) => {
   try {
     const ress = await authenticatedServerFetch<UserType>(
       ctx,
-      "api/user",
+      "/api/user",
       "GET"
     );
     return {
@@ -135,11 +136,19 @@ export const getServerSideProps: GetServerSideProps<
   }
 };
 
-export default function Home({token,data : {email, name, phone} }: Response<{data : UserType}>) {
-  const { Logout } = useAuth();
+export default function Home({
+  token,
+  data: { email, name, phone },
+}: Response<{ data: UserType }>) {
+  const { Logout, user } = useAuth();
   const { setNotification } = useNotification();
   const router = useRouter();
   const [isLoading, setLoading] = useState(false);
+
+  const icon = name.includes(" ")
+    ? [name.split(" ")[0], name.split(" ")[1]].join("")
+    : name.substring(0, 1);
+
   const logoutHandler = async () => {
     setLoading(true);
     const ressLogout = await Logout();
@@ -163,11 +172,11 @@ export default function Home({token,data : {email, name, phone} }: Response<{dat
   };
 
   return (
-    <main className="w-full min-h-screen text-white p-4 sm:p-8 flex flex-col items-center">
+    <BaseLayout className="text-white flex flex-col items-center">
       <Head>
         <title>SSO - Home Page</title>
       </Head>
-      <header className="w-full max-w-6xl flex justify-end items-center space-x-4">
+      <header className="w-full flex justify-end items-center space-x-4">
         <button
           disabled={isLoading}
           onClick={handleConsoleRedirect}
@@ -184,23 +193,10 @@ export default function Home({token,data : {email, name, phone} }: Response<{dat
         </button>
       </header>
 
-      <div className="w-full max-w-6xl mt-8">
+      <div className="w-full mt-8">
         <section className="bg-gray-800 rounded-xl shadow-2xl p-8 flex flex-col items-center text-center">
           <div className="w-24 h-24 rounded-full bg-gray-700 flex items-center justify-center mb-4">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="48"
-              height="48"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-              <circle cx="12" cy="7" r="4"></circle>
-            </svg>
+            <p className="text-4xl font-bold w-fit h-fit">{icon}</p>
           </div>
           <h1 className="text-3xl font-bold text-white">{name}</h1>
           <p className="text-gray-400 mt-2">{email}</p>
@@ -301,6 +297,6 @@ export default function Home({token,data : {email, name, phone} }: Response<{dat
           </div>
         </section>
       </div>
-    </main>
+    </BaseLayout>
   );
 }

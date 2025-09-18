@@ -4,17 +4,31 @@ import { LoginValidator } from "../validators/LoginValidator"
 import { UserType } from "../types/User"
 import { AuthRepository } from '../repository/AuthRepository';
 import { UserRepository } from "../repository/UserRepository"
+import { create } from "zustand"
+
+interface userUserInterface {
+    user: UserType | undefined,
+    setUser: (user: UserType) => void
+    resetUser: () => void
+}
+
+const useUser = create<userUserInterface>((state) => {
+    return {
+        setUser: (user) => state({ user: user }),
+        user: undefined,
+        resetUser: () => state({ user: undefined })
+    }
+})
 
 export const useAuth = () => {
     const [isAuth, setAuth] = useState<boolean>()
 
-    const [user, setUser] = useState<UserType>()
+    const { user, setUser, resetUser } = useUser()
 
     const [redirectUrl, setRedirectUrl] = useState<string>()
 
-    const userRepository = new UserRepository();
-
     const autRepository = new AuthRepository()
+    const userRepository = new UserRepository()
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -26,8 +40,9 @@ export const useAuth = () => {
                 setAuth(false);
             }
         };
-
-        fetchUser();
+        if (!user) {
+            fetchUser();
+        }
     }, []);
 
     const SSO = async (application_key: string, callback_url: string) => {
@@ -62,6 +77,7 @@ export const useAuth = () => {
     const Logout = async (): Promise<boolean> => {
         try {
             await autRepository.Logout()
+            resetUser()
             return true
         } catch {
             return false
