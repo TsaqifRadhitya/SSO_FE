@@ -112,14 +112,14 @@ const accessLogs = [
 ];
 
 export default function Home() {
-  const { Logout, user } = useAuth();
+  const { Logout, auth } = useAuth();
   const { setNotification } = useNotification();
   const router = useRouter();
   const [isLoading, setLoading] = useState(false);
 
-  const icon = user?.name.includes(" ")
-    ? [user?.name.split(" ")[0], user?.name.split(" ")[1]].join("")
-    : user?.name.substring(0, 1);
+  const icon = auth?.user?.name.includes(" ")
+    ? [auth?.user?.name.split(" ")[0], auth?.user?.name.split(" ")[1]].join("")
+    : auth?.user?.name.substring(0, 1);
 
   const logoutHandler = async () => {
     setLoading(true);
@@ -171,9 +171,11 @@ export default function Home() {
             <div className="w-24 h-24 rounded-full bg-gray-700 flex items-center justify-center mb-4">
               <p className="text-4xl font-bold w-fit h-fit">{icon}</p>
             </div>
-            <h1 className="text-3xl font-bold text-white">{user?.name}</h1>
-            <p className="text-gray-400 mt-2">{user?.email}</p>
-            <p className="text-gray-400 mt-1">{user?.phone}</p>
+            <h1 className="text-3xl font-bold text-white">
+              {auth?.user?.name}
+            </h1>
+            <p className="text-gray-400 mt-2">{auth?.user?.email}</p>
+            <p className="text-gray-400 mt-1">{auth?.user?.phone}</p>
           </section>
           <section className="mt-12">
             <h2 className="text-2xl font-semibold mb-6 text-left">

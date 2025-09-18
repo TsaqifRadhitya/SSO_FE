@@ -7,43 +7,57 @@ import { UserRepository } from "../repository/UserRepository"
 import { create } from "zustand"
 import { ErrorMapper } from "../utils/ErroMapper";
 
+type auth = {
+    status: boolean,
+    user?: UserType
+}
+
 interface userUserInterface {
-    user: UserType | undefined,
-    isAuth: boolean | undefined
+    auth: auth | undefined
     setUser: (user: UserType) => void
     resetUser: () => void
-    setAuth: (a: boolean) => void
+    setAuth: (auth: auth) => void
 }
 
 const useUser = create<userUserInterface>((state) => {
     return {
-        setUser: (user) => state({ user: user }),
-        user: undefined,
-        isAuth: undefined,
-        setAuth: (a: boolean) => state({ isAuth: a }),
-        resetUser: () => state({ user: undefined })
+        auth: undefined,
+        setUser: (user) => state((prev) => ({
+            auth: {
+                ...prev.auth as auth, user
+            }
+        })),
+        setAuth: (auth: auth) => state({ auth }),
+        resetUser: () => state((prev) => ({
+            auth: {
+                ...prev.auth as auth, user: undefined
+            }
+        }))
     }
 })
 
 export const useAuth = () => {
-    const { user, setUser, resetUser, isAuth, setAuth } = useUser()
+    const { auth, setUser, resetUser, setAuth } = useUser()
 
     const [redirectUrl, setRedirectUrl] = useState<string>()
 
     const autRepository = new AuthRepository()
     const userRepository = new UserRepository()
 
+    const fetchUser = async () => {
+        try {
+            const data = await userRepository.User();
+            setAuth({
+                status: true,
+                user: data
+            })
+        } catch {
+            setAuth({ status: false });
+        }
+    };
+
     useEffect(() => {
-        const fetchUser = async () => {
-            try {
-                const data = await userRepository.User();
-                setUser(data);
-                setAuth(true);
-            } catch {
-                setAuth(false);
-            }
-        };
-        if (!user && isAuth === undefined) {
+        if (!auth) {
             fetchUser();
         }
     }, []);
@@ -69,7 +83,7 @@ export const useAuth = () => {
 
         try {
             await autRepository.Login(data)
-            setAuth(true)
+            await fetchUser()
         } catch {
             return {
                 email: "invalid credential"
@@ -88,6 +102,6 @@ export const useAuth = () => {
     }
 
     return {
-        isAuth, user, Login, Logout, SSO, redirectUrl
+        auth, Login, Logout, SSO, redirectUrl
     }
 }

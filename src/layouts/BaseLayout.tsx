@@ -12,7 +12,7 @@ export default function BaseLayout({
   className?: string;
   children: React.ReactNode;
 }>) {
-  const { user } = useAuth();
+  const { auth } = useAuth();
   return (
     <NotificationProvider>
       <div
@@ -26,7 +26,7 @@ export default function BaseLayout({
         `,
         }}
       />
-      {<Navbar user={user} />}
+      {<Navbar user={auth?.user} />}
       <main className={cn("pt-28 px-36 w-full min-h-screen bg-fixed", className)}>
         {children}
       </main>
