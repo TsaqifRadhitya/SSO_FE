@@ -40,10 +40,9 @@ const AutenticatedProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [isAuth, router]);
 
-  if (isAuth === undefined) {
-    return;
+  if (isAuth) {
+    return <>{children}</>;
   }
-
   return <LoadingScreen />;
 };
 
