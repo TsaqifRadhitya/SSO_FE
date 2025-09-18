@@ -9,22 +9,24 @@ import { ErrorMapper } from "../utils/ErroMapper";
 
 interface userUserInterface {
     user: UserType | undefined,
+    isAuth: boolean | undefined
     setUser: (user: UserType) => void
     resetUser: () => void
+    setAuth: (a: boolean) => void
 }
 
 const useUser = create<userUserInterface>((state) => {
     return {
         setUser: (user) => state({ user: user }),
         user: undefined,
+        isAuth: undefined,
+        setAuth: (a: boolean) => state({ isAuth: a }),
         resetUser: () => state({ user: undefined })
     }
 })
 
 export const useAuth = () => {
-    const [isAuth, setAuth] = useState<boolean>()
-
-    const { user, setUser, resetUser } = useUser()
+    const { user, setUser, resetUser, isAuth, setAuth } = useUser()
 
     const [redirectUrl, setRedirectUrl] = useState<string>()
 
