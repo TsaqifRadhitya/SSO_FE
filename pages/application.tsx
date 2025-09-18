@@ -1,3 +1,4 @@
+import { useApplication } from "@/src/hooks/useApplication";
 import BaseLayout from "@/src/layouts/BaseLayout";
 import AutenticatedProvider from "@/src/providers/AutenticatedProvider";
 import { ApplicationType } from "@/src/types/Application";
@@ -11,38 +12,15 @@ import { useRouter } from "next/router";
 import { useMemo } from "react";
 import { useState } from "react";
 
-export const getServerSideProps: GetServerSideProps<{
-  data: ApplicationType[];
-}> = async (ctx) => {
-  try {
-    const ress = await authenticatedServerFetch<Response<ApplicationType[]>>(
-      ctx,
-      "api/application/",
-      "GET"
-    );
-    return {
-      props: ress,
-    };
-  } catch {
-    return {
-      redirect: {
-        destination: "/login",
-        permanent: false,
-      },
-    };
-  }
-};
-
-export default function ApplicationPage({
-  data,
-}: Response<{ data: ApplicationType[] }>) {
+export default function ApplicationPage() {
   const [searchTerm, setSearchTerm] = useState<string>();
+  const { applications } = useApplication();
   const filteredData = useMemo(() => {
-    if (!searchTerm) return data;
-    return data.filter((app) =>
+    if (!searchTerm) return applications;
+    return applications?.filter((app) =>
       app.application_name.toLowerCase().includes(searchTerm.toLowerCase())
     );
-  }, [searchTerm, data]);
+  }, [searchTerm, applications]);
 
   const router = useRouter();
 
@@ -108,7 +86,7 @@ export default function ApplicationPage({
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-700">
-                  {filteredData.map((app) => (
+                  {filteredData?.map((app) => (
                     <tr
                       key={app.ID}
                       className="hover:bg-gray-700/40 transition-colors duration-200"
