@@ -12,7 +12,7 @@ export default function BaseLayout({
   className?: string;
   children: React.ReactNode;
 }>) {
-  const { isAuth, user } = useAuth();
+  const { user } = useAuth();
   return (
     <NotificationProvider>
       <div

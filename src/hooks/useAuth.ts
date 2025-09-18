@@ -5,6 +5,7 @@ import { UserType } from "../types/User"
 import { AuthRepository } from '../repository/AuthRepository';
 import { UserRepository } from "../repository/UserRepository"
 import { create } from "zustand"
+import { ErrorMapper } from "../utils/ErroMapper";
 
 interface userUserInterface {
     user: UserType | undefined,
@@ -36,7 +37,7 @@ export const useAuth = () => {
                 const data = await userRepository.User();
                 setUser(data);
                 setAuth(true);
-            } catch (e: any) {
+            } catch {
                 setAuth(false);
             }
         };

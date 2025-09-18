@@ -24,7 +24,7 @@ export class AuthRepository extends BaseRepository {
     async Logout() {
         try {
             await this.authenticatedClientFetch("/api/auth/logout", "POST")
-        } catch (e) {
+        } catch {
             throw new UnautencicatedException()
         }
     }

@@ -27,15 +27,7 @@ export const getServerSideProps: GetServerSideProps<
 export default function ApplicationDetailPage({
   data,
 }: Response<{ data: ApplicationType }>) {
-  const {
-    Delete,
-    CreateCallback,
-    UpdateCallback,
-    Update,
-    DeleteCallback,
-    isLoading,
-    application,
-  } = useApplication(data);
+  const { application } = useApplication(data);
   console.log(application);
   return (
     <BaseLayout>

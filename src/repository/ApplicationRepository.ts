@@ -8,7 +8,7 @@ export class ApplicationRepository extends BaseRepository {
     }
 
     Show(id: string) {
-        return this.authenticatedClientFetch("/api/application/", "GET")
+        return this.authenticatedClientFetch(`/api/application/${id}`, "GET")
     }
 
     Update(id: string, payload: z.infer<typeof UpsertApplicationValidation>) {

@@ -1,22 +1,15 @@
 "use client";
 
-import React, {
-  useState,
-  useEffect,
-  createContext,
-  useContext,
-  ReactNode,
-} from "react";
+import React, { useEffect, ReactNode } from "react";
 import { useNotification } from "../hooks/useNotification";
 
-
 const NotificationProvider = ({ children }: { children: ReactNode }) => {
-  const {notification,setNotification,removeNotificaton} = useNotification();
+  const { notification, removeNotificaton } = useNotification();
 
   useEffect(() => {
     if (notification) {
       const timer = setTimeout(() => {
-        removeNotificaton()
+        removeNotificaton();
       }, 3000);
       return () => clearTimeout(timer);
     }
@@ -64,4 +57,4 @@ const NotificationProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-export default NotificationProvider
+export default NotificationProvider;

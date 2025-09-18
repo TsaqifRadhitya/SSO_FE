@@ -73,7 +73,7 @@ export const getServerSideProps: GetServerSideProps<
         },
       };
     }
-  } catch (e: unknown) {
+  } catch {
     return {
       redirect: {
         destination: "/login",
@@ -83,7 +83,9 @@ export const getServerSideProps: GetServerSideProps<
   }
 };
 
-export default function SSOPage({data: { status,ssoCredential },}: Response<{ data: SSOServerSideProps }>) {
+export default function SSOPage({
+  data: { status, ssoCredential },
+}: Response<{ data: SSOServerSideProps }>) {
   const { SSO, redirectUrl } = useAuth();
   const router = useRouter();
 

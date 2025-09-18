@@ -1,9 +1,8 @@
 import Spinner from "@/src/components/Spinner";
 import { LoginValidator } from "@/src/validators/LoginValidator";
-import { useSearchParams } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
 import { useAuth } from "@/src/hooks/useAuth";
-import z, { string } from "zod";
+import z from "zod";
 import { useRouter } from "next/router";
 import { useNotification } from "@/src/hooks/useNotification";
 import { GetServerSideProps } from "next";
@@ -12,6 +11,7 @@ import { authenticatedServerFetch } from "@/src/utils/fetch";
 import { UserType } from "@/src/types/User";
 import Head from "next/head";
 import BaseLayout from "@/src/layouts/BaseLayout";
+import { ErrorMapper } from "@/src/utils/ErroMapper";
 
 type loginServerSidePropsType = {
   application_key?: string;
@@ -56,7 +56,7 @@ export default function LoginPage({
     password: "",
   });
   const { setNotification } = useNotification();
-  const { Login, isAuth } = useAuth();
+  const { Login } = useAuth();
   const [err, setErr] = useState<ErrorMapper<z.infer<typeof LoginValidator>>>();
   const [isSubmited, setSubmited] = useTransition();
 

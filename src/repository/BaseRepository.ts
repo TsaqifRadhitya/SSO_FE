@@ -1,6 +1,6 @@
 // BaseRepository.ts
 import Axios from "../utils/axios";
-import { isAxiosError, AxiosError } from "axios";
+import { isAxiosError } from "axios";
 import { UnautencicatedException } from "../errors/UnautenticatedException";
 import { NotFoundExeption } from "../errors/NotFoundException";
 import { BadRequestException } from "../errors/BadRequestException";
@@ -66,7 +66,7 @@ export abstract class BaseRepository {
                 default:
                     throw new Error("Invalid method");
             }
-        } catch (e: any) {
+        } catch (e: unknown) {
             if (isAxiosError(e)) {
                 const status = e.response?.status;
                 switch (status) {

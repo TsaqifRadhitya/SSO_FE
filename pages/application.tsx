@@ -22,7 +22,7 @@ export const getServerSideProps: GetServerSideProps<{
     return {
       props: ress,
     };
-  } catch (e: unknown) {
+  } catch {
     return {
       redirect: {
         destination: "/login",
@@ -41,7 +41,7 @@ export default function ApplicationPage({
     return data.filter((app) =>
       app.application_name.toLowerCase().includes(searchTerm.toLowerCase())
     );
-  }, [searchTerm]);
+  }, [searchTerm, data]);
 
   const router = useRouter();
 

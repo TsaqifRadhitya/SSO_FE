@@ -6,7 +6,7 @@ import { useState } from "react";
 
 export default function ProfilePage() {
   const [isLoading, setLoading] = useState(false);
-  const { Logout, user } = useAuth();
+  const { Logout } = useAuth();
   const { setNotification } = useNotification();
   const router = useRouter();
 

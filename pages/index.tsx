@@ -126,7 +126,7 @@ export const getServerSideProps: GetServerSideProps<
     return {
       props: ress,
     };
-  } catch (e: unknown) {
+  } catch{
     return {
       redirect: {
         destination: "/login",
@@ -137,10 +137,9 @@ export const getServerSideProps: GetServerSideProps<
 };
 
 export default function Home({
-  token,
   data: { email, name, phone },
 }: Response<{ data: UserType }>) {
-  const { Logout, user } = useAuth();
+  const { Logout } = useAuth();
   const { setNotification } = useNotification();
   const router = useRouter();
   const [isLoading, setLoading] = useState(false);

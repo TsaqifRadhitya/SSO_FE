@@ -7,8 +7,6 @@ import { NotFoundExeption } from "../errors/NotFoundException"
 import { BadRequestException } from "../errors/BadRequestException"
 import { UnautencicatedException } from "../errors/UnautenticatedException"
 import { Response } from "../types/getServerSidePropsReturn"
-import axios from "./axios"
-
 
 export const authenticatedServerFetch = async <T>(ctx: GetServerSidePropsContext<NextParsedUrlQuery, PreviewData>, url: string, method: "GET" | "POST" | "DELETE" | "PUT" | "PATCH", payload?: object): Promise<Response<{ data: T }>> => {
     try {
