@@ -43,7 +43,7 @@ export const useAuth = () => {
                 setAuth(false);
             }
         };
-        if (!user && !isAuth) {
+        if (!user && isAuth === undefined) {
             fetchUser();
         }
     }, []);
