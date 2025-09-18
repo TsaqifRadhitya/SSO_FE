@@ -1,42 +1,30 @@
-import { GetServerSideProps } from "next";
-import { ApplicationType } from "../../src/types/Application";
-import { authenticatedServerFetch } from "@/src/utils/fetch";
-import { Response } from "@/src/types/getServerSidePropsReturn";
 import Head from "next/head";
 import { useApplication } from "@/src/hooks/useApplication";
 import BaseLayout from "@/src/layouts/BaseLayout";
+import AutenticatedProvider from "@/src/providers/AutenticatedProvider";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
 
-export const getServerSideProps: GetServerSideProps<
-  Response<{ data: ApplicationType }>
-> = async (ctx) => {
-  const { id } = ctx.query;
-  try {
-    const data = await authenticatedServerFetch<ApplicationType>(
-      ctx,
-      `/api/application/${id}`,
-      "GET"
-    );
-    return { props: data };
-  } catch {
-    return {
-      notFound: true,
-    };
-  }
-};
-
-export default function ApplicationDetailPage({
-  data,
-}: Response<{ data: ApplicationType }>) {
-  const { application } = useApplication(data);
-  console.log(application);
+export default function ApplicationDetailPage() {
+  const router = useRouter();
+  const { id } = router.query;
+  const applicationId = typeof id === "string" ? id : undefined;
+  const { application, isLoading } = useApplication(applicationId);
+  useEffect(() => {
+    if (!application && !isLoading) {
+      router.replace("/404");
+    }
+  }, [isLoading, application]);
   return (
-    <BaseLayout>
-      <main className="min-h-screen">
-        <Head>
-          <title>SSO - {data.application_name} Application</title>
-        </Head>
-      </main>
-      ;
-    </BaseLayout>
+    <AutenticatedProvider>
+      <BaseLayout>
+        <main className="min-h-screen">
+          <Head>
+            <title>SSO - {application?.application_name} Application</title>
+          </Head>
+        </main>
+        ;
+      </BaseLayout>
+    </AutenticatedProvider>
   );
 }

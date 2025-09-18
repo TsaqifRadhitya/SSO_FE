@@ -1,13 +1,14 @@
 import z from "zod";
 import { BaseRepository } from "./BaseRepository";
 import { UpsertApplicationValidation } from "../validators/ApplicationValidator";
+import { ApplicationType } from "../types/Application";
 
 export class ApplicationRepository extends BaseRepository {
-    Index() {
+    Index() : Promise<ApplicationType[]> {
         return this.authenticatedClientFetch("/api/application/", "GET")
     }
 
-    Show(id: string) {
+    Show(id: string) : Promise<ApplicationType> {
         return this.authenticatedClientFetch(`/api/application/${id}`, "GET")
     }
 
