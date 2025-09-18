@@ -36,7 +36,7 @@ const useUser = create<userUserInterface>((state) => {
     }
 })
 
-export const useAuth = () => {
+export const useAuth = (initial?: boolean) => {
     const { auth, setUser, resetUser, setAuth } = useUser()
 
     const [redirectUrl, setRedirectUrl] = useState<string>()
@@ -57,10 +57,10 @@ export const useAuth = () => {
     };
 
     useEffect(() => {
-        if (!auth) {
+        if (initial) {
             fetchUser();
         }
-    }, []);
+    }, [initial]);
 
     const SSO = async (application_key: string, callback_url: string) => {
         try {

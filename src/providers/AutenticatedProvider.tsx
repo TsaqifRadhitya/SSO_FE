@@ -31,7 +31,7 @@ const LoadingScreen = () => {
 };
 
 const AutenticatedProvider = ({ children }: { children: ReactNode }) => {
-  const { auth } = useAuth();
+  const { auth } = useAuth(true);
   const router = useRouter();
 
   useEffect(() => {
