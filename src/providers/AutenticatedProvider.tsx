@@ -38,7 +38,7 @@ const AutenticatedProvider = ({ children }: { children: ReactNode }) => {
     if (isAuth === false) {
       router.push("/login");
     }
-  }, [isAuth, router]);
+  }, [isAuth]);
 
   if (isAuth) {
     return <>{children}</>;
