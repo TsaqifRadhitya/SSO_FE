@@ -12,7 +12,9 @@ const AutenticatedProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [isAuth]);
 
-  return children;
+  if (isAuth) {
+    return children;
+  }
 };
 
 export default AutenticatedProvider;
