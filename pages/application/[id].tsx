@@ -11,12 +11,6 @@ export default function ApplicationDetailPage() {
   const applicationId = typeof id === "string" ? id : undefined;
   const { application, isLoading } = useApplication(applicationId);
 
-  useEffect(() => {
-    if (!application && !isLoading) {
-      router.replace("/404");
-    }
-  }, [isLoading, application]);
-
   return (
     <AutenticatedProvider>
       <BaseLayout>
