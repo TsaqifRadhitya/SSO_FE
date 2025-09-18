@@ -7,8 +7,9 @@ const LoadingScreen = () => {
   return (
     <BaseLayout className="flex h-screen flex-col items-center justify-center text-center">
       <div className="animate-pulse">
+        {/* Menggunakan ikon gembok dari Navbar untuk konsistensi */}
         <svg
-          className="h-12 w-12 text-cyan-400 mx-auto"
+          className="mx-auto h-12 w-12 text-cyan-400"
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"
@@ -35,15 +36,25 @@ const AutenticatedProvider = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
 
   useEffect(() => {
+    // Hanya redirect jika statusnya sudah pasti `false`.
     if (isAuth === false) {
       router.push("/login");
     }
-  }, [isAuth]);
+  }, [isAuth, router]); // <-- Menambahkan router ke dependency array
 
-  if (isAuth) {
+  // 1. KONDISI LOADING: Saat isAuth masih undefined, proses verifikasi sedang berjalan.
+  if (isAuth === undefined) {
+    return <LoadingScreen />;
+  }
+
+  // 2. KONDISI BERHASIL: Saat isAuth true, tampilkan konten halaman.
+  if (isAuth === true) {
     return <>{children}</>;
   }
-  return <LoadingScreen />;
+
+  // 3. KONDISI GAGAL: Saat isAuth false, jangan tampilkan apa-apa.
+  //    useEffect di atas akan menangani redirect. Ini mencegah konten berkedip.
+  return null;
 };
 
 export default AutenticatedProvider;
