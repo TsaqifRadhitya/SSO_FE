@@ -114,19 +114,8 @@ const accessLogs = [
   },
 ];
 
-export const getServerSideProps: GetServerSideProps<
-  Response<{ data: UserType }>
-> = async (ctx) => {
-  try {
-    const ress = await authenticatedServerFetch<UserType>(
-      ctx,
-      "/api/user",
-      "GET"
-    );
-    return {
-      props: ress,
-    };
-  } catch{
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  if (!ctx.req.cookies.refresh_token) {
     return {
       redirect: {
         destination: "/login",
@@ -134,19 +123,20 @@ export const getServerSideProps: GetServerSideProps<
       },
     };
   }
+  return {
+    props: {}, // Tidak perlu lagi mengirim data user sebagai props
+  };
 };
 
-export default function Home({
-  data: { email, name, phone },
-}: Response<{ data: UserType }>) {
-  const { Logout } = useAuth();
+export default function Home() {
+  const { Logout, user } = useAuth();
   const { setNotification } = useNotification();
   const router = useRouter();
   const [isLoading, setLoading] = useState(false);
 
-  const icon = name.includes(" ")
-    ? [name.split(" ")[0], name.split(" ")[1]].join("")
-    : name.substring(0, 1);
+  const icon = user?.name.includes(" ")
+    ? [user?.name.split(" ")[0], user?.name.split(" ")[1]].join("")
+    : user?.name.substring(0, 1);
 
   const logoutHandler = async () => {
     setLoading(true);
@@ -197,9 +187,9 @@ export default function Home({
           <div className="w-24 h-24 rounded-full bg-gray-700 flex items-center justify-center mb-4">
             <p className="text-4xl font-bold w-fit h-fit">{icon}</p>
           </div>
-          <h1 className="text-3xl font-bold text-white">{name}</h1>
-          <p className="text-gray-400 mt-2">{email}</p>
-          <p className="text-gray-400 mt-1">{phone}</p>
+          <h1 className="text-3xl font-bold text-white">{user?.name}</h1>
+          <p className="text-gray-400 mt-2">{user?.email}</p>
+          <p className="text-gray-400 mt-1">{user?.phone}</p>
         </section>
         <section className="mt-12">
           <h2 className="text-2xl font-semibold mb-6 text-left">
