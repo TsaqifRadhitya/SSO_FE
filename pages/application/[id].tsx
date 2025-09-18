@@ -16,7 +16,7 @@ export default function ApplicationDetailPage() {
       router.replace("/404");
     }
   }, [isLoading, application]);
-  
+
   return (
     <AutenticatedProvider>
       <BaseLayout>

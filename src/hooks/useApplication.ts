@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { ApplicationType } from "../types/Application";
 import { ApplicationRepository } from "../repository/ApplicationRepository";
+import { useRouter } from "next/router";
 
 export const useApplication = (id?: string) => {
     const [application, setApplication] = useState<ApplicationType | undefined>()
@@ -26,10 +27,7 @@ export const useApplication = (id?: string) => {
                 setLoading(true)
                 setApplications(await applicationRepository.Index())
             } catch {
-
-            } finally {
                 setLoading(false)
-                return
             }
         }
         fetch()
