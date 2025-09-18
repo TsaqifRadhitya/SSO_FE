@@ -12,12 +12,17 @@ export const useApplication = (id?: string) => {
 
     const applicationRepository = new ApplicationRepository()
 
+    const router = useRouter()
+
     useEffect(() => {
         const fetch = async () => {
             if (id) {
                 try {
                     setLoading(true)
                     setApplication(await applicationRepository.Show(id))
+
+                } catch {
+                    router.replace("/404")
                 } finally {
                     setLoading(false)
                     return
@@ -26,8 +31,9 @@ export const useApplication = (id?: string) => {
             try {
                 setLoading(true)
                 setApplications(await applicationRepository.Index())
-            } catch {
+            } finally {
                 setLoading(false)
+                return
             }
         }
         fetch()
