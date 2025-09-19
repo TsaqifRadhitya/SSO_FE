@@ -1,11 +1,24 @@
 import { create } from "zustand";
-import { useNotificationHookInterface } from "../types/Notification";
+import {
+  NotificationType,
+  useNotificationHookInterface,
+} from "../types/Notification";
 
 export const useNotification = create<useNotificationHookInterface>((set) => ({
-  notification: undefined,
+  notificationState: undefined,
   setNotification: (notification) =>
     set({
-      notification,
+      notificationState: {
+        isAppear: false,
+        notification,
+      },
     }),
-  removeNotificaton: () => set({ notification: undefined }),
+  removeNotificaton: () => set({ notificationState: undefined }),
+  setAppear: () =>
+    set((prev) => ({
+      notificationState: {
+        notification: prev.notificationState as unknown as NotificationType,
+        isAppear: true,
+      },
+    })),
 }));

@@ -1,39 +1,41 @@
 "use client";
 
-import React, { useEffect, ReactNode } from "react";
+import React, { useEffect, ReactNode, useState } from "react";
 import { useNotification } from "../hooks/useNotification";
 
 const NotificationProvider = ({ children }: { children: ReactNode }) => {
-  const { notification, removeNotificaton } = useNotification();
+  const { notificationState, removeNotificaton } = useNotification();
 
   useEffect(() => {
-    if (notification) {
+    if (notificationState && !notificationState.isAppear) {
       const timer = setTimeout(() => {
         removeNotificaton();
       }, 3000);
       return () => clearTimeout(timer);
     }
-  }, [notification]);
+  }, [notificationState]);
 
   return (
     <>
       {children}
-      {notification && (
+      {notificationState && (
         <div className="fixed top-5 right-5 z-50 max-w-xs w-full bg-white text-gray-800 shadow-lg border border-gray-200 rounded-lg p-4 animate-slide-in">
           <div className="flex items-start space-x-3">
             <div>
-              {notification.type === "Success" && (
+              {notificationState.notification.type === "Success" && (
                 <span className="text-green-500 font-bold text-xl">✓</span>
               )}
-              {notification.type === "Error" && (
+              {notificationState.notification.type === "Error" && (
                 <span className="text-red-500 font-bold text-xl">✗</span>
               )}
-              {notification.type === "Info" && (
+              {notificationState.notification.type === "Info" && (
                 <span className="text-blue-500 font-bold text-xl">i</span>
               )}
             </div>
             <div className="flex-1 pt-1">
-              <p className="text-sm text-gray-700">{notification.message}</p>
+              <p className="text-sm text-gray-700">
+                {notificationState.notification.message}
+              </p>
             </div>
           </div>
         </div>

@@ -85,7 +85,6 @@ export const useAuth = (initial?: boolean) => {
                 password: err.password?._errors[0]
             }
         }
-
         try {
             await autRepository.Login(data)
             await fetchUser()
