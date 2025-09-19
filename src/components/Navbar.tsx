@@ -17,22 +17,22 @@ const Navbar = ({ user }: { user: UserType | undefined }) => {
   >("HOME");
 
   useEffect(() => {
-    if (pathName.startsWith("/application")) {
+    if (pathName?.startsWith("/application")) {
       setPathName("APPLICATION");
       return;
     }
 
-    if (pathName.startsWith("/logs")) {
+    if (pathName?.startsWith("/logs")) {
       setPathName("LOG");
       return;
     }
 
-    if (pathName.startsWith("/profile")) {
+    if (pathName?.startsWith("/profile")) {
       setPathName("PROFILE");
       return;
     }
 
-    if (pathName.startsWith("/Setting")) {
+    if (pathName?.startsWith("/Setting")) {
       setPathName("SETTING");
       return;
     }

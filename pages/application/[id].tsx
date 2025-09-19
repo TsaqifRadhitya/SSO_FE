@@ -3,7 +3,6 @@ import { useApplication } from "@/src/hooks/useApplication";
 import BaseLayout from "@/src/layouts/BaseLayout";
 import AutenticatedProvider from "@/src/providers/AutenticatedProvider";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
 
 export default function ApplicationDetailPage() {
   const router = useRouter();

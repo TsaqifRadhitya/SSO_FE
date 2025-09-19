@@ -93,8 +93,8 @@ export default function LoginPage({
         );
         return;
       }
-      setNotification({ message: "Login Success", type: "Success" });
       router.push("/");
+      setNotification({ message: "Login Success", type: "Success" });
     });
   };
 

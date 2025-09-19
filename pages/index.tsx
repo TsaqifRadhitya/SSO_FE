@@ -112,23 +112,11 @@ const accessLogs = [
 ];
 
 export default function Home() {
-  const { Logout, auth } = useAuth();
-  const router = useRouter();
-  const [isLoading, setLoading] = useState(false);
+  const { auth } = useAuth();
 
   const icon = auth?.user?.name.includes(" ")
     ? [auth?.user?.name.split(" ")[0], auth?.user?.name.split(" ")[1]].join("")
     : auth?.user?.name.substring(0, 1);
-
-  const logoutHandler = async () => {
-    setLoading(true);
-    await Logout();
-    setLoading(false);
-  };
-
-  const handleConsoleRedirect = () => {
-    router.push("/application");
-  };
 
   return (
     <AutenticatedProvider>
@@ -136,23 +124,6 @@ export default function Home() {
         <Head>
           <title>SSO - Home Page</title>
         </Head>
-        <header className="w-full flex justify-end items-center space-x-4">
-          <button
-            disabled={isLoading}
-            onClick={handleConsoleRedirect}
-            className="rounded-md shadow bg-blue-600 hover:bg-blue-700 text-white p-3 py-2 cursor-pointer transition-colors duration-200 disabled:opacity-50"
-          >
-            Go to SSO Console
-          </button>
-          <button
-            disabled={isLoading}
-            onClick={logoutHandler}
-            className="rounded-md shadow bg-red-700 hover:bg-red-800 text-white p-3 py-2 cursor-pointer transition-colors duration-200 disabled:opacity-50"
-          >
-            Log Out
-          </button>
-        </header>
-
         <div className="w-full mt-8">
           <section className="bg-gray-800 rounded-xl shadow-2xl p-8 flex flex-col items-center text-center">
             <div className="w-24 h-24 rounded-full bg-gray-700 flex items-center justify-center mb-4">

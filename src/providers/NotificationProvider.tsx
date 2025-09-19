@@ -1,14 +1,17 @@
 "use client";
 
-import React, { useEffect, ReactNode, useState } from "react";
+import React, { useEffect, ReactNode, useState, useLayoutEffect } from "react";
 import { useNotification } from "../hooks/useNotification";
+import { usePathname } from "next/navigation";
 
 const NotificationProvider = ({ children }: { children: ReactNode }) => {
   const { notificationState, removeNotificaton, setAppear } = useNotification();
 
+  const pathName = usePathname();
+
   useEffect(() => {
     if (notificationState && !notificationState.isAppear) {
-      setAppear();
+      setAppear(notificationState);
       const timer = setTimeout(() => {
         removeNotificaton();
       }, 3000);
@@ -16,11 +19,18 @@ const NotificationProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [notificationState]);
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      removeNotificaton();
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, [pathName]);
+
   return (
     <>
       {children}
-      {notificationState && (
-        <div className="fixed top-5 right-5 z-50 max-w-xs w-full bg-white text-gray-800 shadow-lg border border-gray-200 rounded-lg p-4 animate-slide-in">
+      {notificationState?.isAppear && (
+        <div className="fixed top-5 right-5 z-50 max-w-xs w-full bg-white text-gray-800 shadow-lg border border-gray-200 rounded-lg p-4">
           <div className="flex items-start space-x-3">
             <div>
               {notificationState.notification.type === "Success" && (

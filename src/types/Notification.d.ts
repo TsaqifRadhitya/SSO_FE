@@ -10,5 +10,8 @@ export interface useNotificationHookInterface {
     }
     setNotification: (data: NotificationType) => void
     removeNotificaton: () => void
-    setAppear: () => void
+    setAppear: (data: {
+        notification: NotificationType
+        isAppear: boolean
+    }) => void
 }
