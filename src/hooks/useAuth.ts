@@ -39,7 +39,7 @@ const useUser = create<userUserInterface>((state) => {
 })
 
 export const useAuth = (initial?: boolean) => {
-    const { auth, setUser, resetUser, setAuth } = useUser()
+    const { auth, resetUser, setAuth } = useUser()
 
     const { setNotification } = useNotification();
     const router = useRouter();
@@ -102,7 +102,7 @@ export const useAuth = (initial?: boolean) => {
                 message: "Successfully logged out",
                 type: "Success",
             });
-            router.push("/login");
+            await router.push("/login");
             resetUser()
             return true
         } catch {

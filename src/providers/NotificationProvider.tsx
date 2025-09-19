@@ -4,10 +4,11 @@ import React, { useEffect, ReactNode, useState } from "react";
 import { useNotification } from "../hooks/useNotification";
 
 const NotificationProvider = ({ children }: { children: ReactNode }) => {
-  const { notificationState, removeNotificaton } = useNotification();
+  const { notificationState, removeNotificaton, setAppear } = useNotification();
 
   useEffect(() => {
     if (notificationState && !notificationState.isAppear) {
+      setAppear();
       const timer = setTimeout(() => {
         removeNotificaton();
       }, 3000);
