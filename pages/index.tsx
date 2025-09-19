@@ -113,7 +113,6 @@ const accessLogs = [
 
 export default function Home() {
   const { Logout, auth } = useAuth();
-  const { setNotification } = useNotification();
   const router = useRouter();
   const [isLoading, setLoading] = useState(false);
 
@@ -123,19 +122,7 @@ export default function Home() {
 
   const logoutHandler = async () => {
     setLoading(true);
-    const ressLogout = await Logout();
-    if (ressLogout) {
-      setNotification({
-        message: "Successfully logged out",
-        type: "Success",
-      });
-      router.push("/login");
-    } else {
-      setNotification({
-        message: "Logout Failed. Please try again.",
-        type: "Error",
-      });
-    }
+    await Logout();
     setLoading(false);
   };
 

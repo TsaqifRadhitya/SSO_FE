@@ -8,24 +8,10 @@ import { useState } from "react";
 export default function ProfilePage() {
   const [isLoading, setLoading] = useState(false);
   const { Logout } = useAuth();
-  const { setNotification } = useNotification();
-  const router = useRouter();
 
   const logoutHandler = async () => {
     setLoading(true);
-    const ressLogout = await Logout();
-    if (ressLogout) {
-      setNotification({
-        message: "Successfully logged out",
-        type: "Success",
-      });
-      router.push("/login");
-    } else {
-      setNotification({
-        message: "Logout Failed. Please try again.",
-        type: "Error",
-      });
-    }
+    await Logout();
     setLoading(false);
   };
 

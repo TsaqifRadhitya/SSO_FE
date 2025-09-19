@@ -6,6 +6,8 @@ import { AuthRepository } from '../repository/AuthRepository';
 import { UserRepository } from "../repository/UserRepository"
 import { create } from "zustand"
 import { ErrorMapper } from "../utils/ErroMapper";
+import { useNotification } from "./useNotification";
+import { useRouter } from "next/router";
 
 type auth = {
     status: boolean,
@@ -38,6 +40,9 @@ const useUser = create<userUserInterface>((state) => {
 
 export const useAuth = (initial?: boolean) => {
     const { auth, setUser, resetUser, setAuth } = useUser()
+
+    const { setNotification } = useNotification();
+    const router = useRouter();
 
     const [redirectUrl, setRedirectUrl] = useState<string>()
 
@@ -94,9 +99,18 @@ export const useAuth = (initial?: boolean) => {
     const Logout = async (): Promise<boolean> => {
         try {
             await autRepository.Logout()
+            setNotification({
+                message: "Successfully logged out",
+                type: "Success",
+            });
+            router.push("/login");
             resetUser()
             return true
         } catch {
+            setNotification({
+                message: "Logout Failed. Please try again.",
+                type: "Error",
+            });
             return false
         }
     }
