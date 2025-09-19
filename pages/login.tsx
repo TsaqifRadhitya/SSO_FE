@@ -6,9 +6,6 @@ import z from "zod";
 import { useRouter } from "next/router";
 import { useNotification } from "@/src/hooks/useNotification";
 import { GetServerSideProps } from "next";
-import { Response } from "@/src/types/getServerSidePropsReturn";
-import { authenticatedServerFetch } from "@/src/utils/fetch";
-import { UserType } from "@/src/types/User";
 import Head from "next/head";
 import BaseLayout from "@/src/layouts/BaseLayout";
 import { ErrorMapper } from "@/src/utils/ErroMapper";
@@ -18,33 +15,15 @@ type loginServerSidePropsType = {
   callback_url?: string;
 };
 
-export const getServerSideProps: GetServerSideProps<
-  loginServerSidePropsType
-> = async (ctx) => {
-  try {
-    await authenticatedServerFetch<Response<UserType>>(ctx, "/api/user", "GET");
-    return {
-      redirect: {
-        destination: "/",
-        permanent: false,
-      },
-    };
-  } catch {
-    const { application_key, callback_url } = ctx.query;
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const { application_key, callback_url } = ctx.query;
 
-    if (!application_key && !callback_url) {
-      return {
-        props: {},
-      };
-    }
-
-    return {
-      props: {
-        application_key: application_key as string,
-        callback_url: callback_url as string,
-      },
-    };
-  }
+  return {
+    props: {
+      application_key: application_key ?? "",
+      callback_url: callback_url ?? "",
+    },
+  };
 };
 
 export default function LoginPage({
@@ -56,7 +35,7 @@ export default function LoginPage({
     password: "",
   });
   const { setNotification } = useNotification();
-  const { Login } = useAuth();
+  const { Login, auth } = useAuth(true);
   const [err, setErr] = useState<ErrorMapper<z.infer<typeof LoginValidator>>>();
   const [isSubmited, setSubmited] = useTransition();
 
@@ -74,6 +53,12 @@ export default function LoginPage({
     return () => document.removeEventListener("keypress", submitByEnter);
   }, [login]);
 
+  useEffect(() => {
+    if (auth?.status && application_key === "" && callback_url === "") {
+      router.push("/");
+    }
+  }, [auth]);
+
   const handleLogin = () => {
     setSubmited(async () => {
       const result = await Login(login);
@@ -86,14 +71,13 @@ export default function LoginPage({
       }
 
       setErr(undefined);
-      if (!!application_key && !!callback_url) {
+      if (application_key !== "" && callback_url !== "") {
         setNotification({ message: "Redirect To SSO", type: "Info" });
         router.push(
           `/sso?application_key=${application_key}&&callback_url=${callback_url}`
         );
         return;
       }
-      router.push("/");
       setNotification({ message: "Login Success", type: "Success" });
     });
   };

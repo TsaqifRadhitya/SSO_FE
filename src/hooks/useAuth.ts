@@ -62,7 +62,7 @@ export const useAuth = (initial?: boolean) => {
     };
 
     useEffect(() => {
-        if (initial) {
+        if (initial && !auth) {
             fetchUser();
         }
     }, [initial]);
