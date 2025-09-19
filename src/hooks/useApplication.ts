@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { ApplicationType } from "../types/Application";
 import { ApplicationRepository } from "../repository/ApplicationRepository";
 import { useRouter } from "next/router";
+import { useAuth } from "./useAuth";
 
 export const useApplication = (id?: string) => {
     const [application, setApplication] = useState<ApplicationType | undefined>()
@@ -14,9 +15,12 @@ export const useApplication = (id?: string) => {
 
     const router = useRouter()
 
+    const { auth } = useAuth()
+
     useEffect(() => {
         const fetch = async () => {
-            if (id) {
+            if(!auth) return
+            if (id && auth.status) {
                 try {
                     setLoading(true)
                     setApplication(await applicationRepository.Show(id))
@@ -37,7 +41,7 @@ export const useApplication = (id?: string) => {
             }
         }
         fetch()
-    }, [id])
+    }, [id,auth])
 
     const Delete = async (id: number): Promise<boolean> => {
         return false
