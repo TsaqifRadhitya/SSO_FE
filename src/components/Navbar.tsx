@@ -1,15 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { UserType } from "../types/User";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { cn } from "../utils/Cn";
+import { authType } from "../hooks/useAuth";
 
-const Navbar = ({ user }: { user: UserType | undefined }) => {
-  const icon = user?.name.includes(" ")
-    ? [user.name.split(" ")[0], user.name.split(" ")[1]].join("")
-    : user?.name.substring(0, 1);
+const Navbar = ({ auth }: { auth: authType | undefined }) => {
+  const icon = auth?.user?.name.includes(" ")
+    ? [auth?.user.name.split(" ")[0], auth?.user.name.split(" ")[1]].join("")
+    : auth?.user?.name.substring(0, 1);
 
   const pathName = usePathname();
   const [pathNameState, setPathName] = useState<
@@ -44,7 +44,7 @@ const Navbar = ({ user }: { user: UserType | undefined }) => {
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-8">
         <div className="flex items-center justify-between h-16">
           <Link
-            href={user ? "/" : "login"}
+            href={auth?.status ? "/" : "login"}
             className="flex items-center space-x-4"
           >
             <svg
@@ -64,7 +64,7 @@ const Navbar = ({ user }: { user: UserType | undefined }) => {
             <span className="text-xl font-bold text-white">SSO</span>
           </Link>
 
-          {user && (
+          {auth?.status && auth.user && (
             <>
               <nav className="hidden md:flex items-center space-x-4">
                 <Link
@@ -108,7 +108,7 @@ const Navbar = ({ user }: { user: UserType | undefined }) => {
                 </div>
                 <div className="hidden sm:block">
                   <p className="text-sm font-semibold text-white">
-                    {user.name}
+                    {auth.user.name}
                   </p>
                 </div>
               </Link>

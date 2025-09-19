@@ -31,19 +31,19 @@ const LoadingScreen = () => {
 };
 
 const AutenticatedProvider = ({ children }: { children: ReactNode }) => {
-  const { auth } = useAuth(true);
+  const { auth, isFinish } = useAuth(true);
   const router = useRouter();
 
   useEffect(() => {
-    if (auth?.status === false) {
+    if (auth?.status === false && isFinish) {
       router.push("/login");
     }
   }, [auth]);
 
-  if (auth?.status) {
+  if (auth?.status && isFinish) {
     return <>{children}</>;
   }
-  return <LoadingScreen />;
+  return !isFinish && <LoadingScreen />;
 };
 
 export default AutenticatedProvider;

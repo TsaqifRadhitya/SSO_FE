@@ -26,8 +26,10 @@ export default function BaseLayout({
         `,
         }}
       />
-      {<Navbar user={auth?.user} />}
-      <main className={cn("py-28 px-36 w-full min-h-screen bg-fixed", className)}>
+      {<Navbar auth={auth} />}
+      <main
+        className={cn("py-28 px-36 w-full min-h-screen bg-fixed", className)}
+      >
         {children}
       </main>
     </NotificationProvider>

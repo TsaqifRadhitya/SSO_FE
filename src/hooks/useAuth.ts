@@ -9,16 +9,17 @@ import { ErrorMapper } from "../utils/ErroMapper";
 import { useNotification } from "./useNotification";
 import { useRouter } from "next/router";
 
-type auth = {
+export type authType = {
     status: boolean,
     user?: UserType
 }
 
 interface userUserInterface {
-    auth: auth | undefined
+    auth: authType | undefined
+    isFinish: boolean
     setUser: (user: UserType) => void
     resetUser: () => void
-    setAuth: (auth: auth) => void
+    setAuth: (auth: authType) => void
 }
 
 const useUser = create<userUserInterface>((state) => {
@@ -26,25 +27,26 @@ const useUser = create<userUserInterface>((state) => {
         auth: undefined,
         setUser: (user) => state((prev) => ({
             auth: {
-                ...prev.auth as auth, user
+                ...prev.auth as authType, user
             }
         })),
-        setAuth: (auth: auth) => state({ auth }),
+        isFinish: true,
+        setAuth: (auth: authType) => state({ auth, isFinish: true }),
         resetUser: () => state((prev) => ({
-            auth: {
-                ...prev.auth as auth, user: undefined
-            }
+            auth: undefined, isFinish: true
         }))
     }
 })
 
 export const useAuth = (initial?: boolean) => {
-    const { auth, resetUser, setAuth } = useUser()
+    const { auth, setAuth, isFinish, resetUser } = useUser()
 
     const { setNotification } = useNotification();
     const router = useRouter();
 
     const [redirectUrl, setRedirectUrl] = useState<string>()
+
+    const [isloading, setLoading] = useState<boolean>(false)
 
     const autRepository = new AuthRepository()
     const userRepository = new UserRepository()
@@ -63,7 +65,8 @@ export const useAuth = (initial?: boolean) => {
 
     useEffect(() => {
         if (initial && !auth) {
-            fetchUser();
+            setLoading(true)
+            fetchUser().then(() => setLoading(false))
         }
     }, [initial]);
 
@@ -115,6 +118,6 @@ export const useAuth = (initial?: boolean) => {
     }
 
     return {
-        auth, Login, Logout, SSO, redirectUrl
+        auth, Login, Logout, SSO, redirectUrl, isloading, isFinish
     }
 }
