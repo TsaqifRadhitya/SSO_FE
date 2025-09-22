@@ -5,12 +5,12 @@ import { formatDate } from "@/src/utils/DateFormaterUtils";
 import AuthenticatedLayout from "@/src/layouts/AutenticatedLayout";
 import Head from "next/head";
 import React from "react";
+import { useUser } from "@/src/hooks/userUser";
 
 const connectedApps = [
   {
     id: 1,
     name: "Project Management Hub",
-    description: "Collaborate and manage your team's projects seamlessly.",
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -110,6 +110,7 @@ const accessLogs = [
 
 export default function Home() {
   const { auth } = useAuth();
+  const { accessLog, connectedApplication } = useUser();
 
   const icon = auth?.user?.name.includes(" ")
     ? [auth?.user?.name.split(" ")[0], auth?.user?.name.split(" ")[1]].join("")
@@ -133,30 +134,35 @@ export default function Home() {
           <h2 className="text-2xl font-semibold mb-6 text-left">
             Connected Applications
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {connectedApps.map((app) => (
-              <div
-                key={app.id}
-                className="bg-gray-800 p-6 rounded-lg shadow-lg hover:shadow-cyan-500/20 hover:scale-105 transition-all duration-300 flex flex-col"
-              >
-                <div className="flex items-center mb-4">
-                  <div className="w-10 h-10 flex items-center justify-center bg-gray-700 rounded-full mr-4">
-                    {app.icon}
+          {connectedApplication && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {connectedApplication &&
+                connectedApplication.map((app) => (
+                  <div
+                    key={app.ID}
+                    className="bg-gray-800 p-6 rounded-lg shadow-lg hover:shadow-cyan-500/20 hover:scale-105 transition-all duration-300 flex flex-col"
+                  >
+                    <div className="flex items-center mb-4">
+                      <div className="w-10 h-10 flex items-center justify-center bg-gray-700 rounded-full mr-4">
+                        {/* {app.icon} */}
+                      </div>
+                      <h3 className="text-xl font-bold">
+                        {app.Application.application_name}
+                      </h3>
+                    </div>
+                    <p className="text-gray-400 text-sm flex-grow">
+                      {/* {app.description} */}
+                    </p>
+                    <a
+                      href="#"
+                      className="mt-4 text-blue-400 hover:text-blue-300 self-start"
+                    >
+                      Go to App &rarr;
+                    </a>
                   </div>
-                  <h3 className="text-xl font-bold">{app.name}</h3>
-                </div>
-                <p className="text-gray-400 text-sm flex-grow">
-                  {app.description}
-                </p>
-                <a
-                  href="#"
-                  className="mt-4 text-blue-400 hover:text-blue-300 self-start"
-                >
-                  Go to App &rarr;
-                </a>
-              </div>
-            ))}
-          </div>
+                ))}
+            </div>
+          )}
         </section>
         <section className="mt-12">
           <h2 className="text-2xl font-semibold mb-6 text-left">
@@ -166,23 +172,29 @@ export default function Home() {
             <h3 className="text-lg font-bold text-cyan-400 mb-3">
               Last Login Activity
             </h3>
-            <p>
-              <span className="font-semibold text-gray-300">Time:</span>{" "}
-              <span className="text-gray-400">
-                {formatDate(accessLogs[0].timestamp)}
-              </span>
-            </p>
-            <p>
-              <span className="font-semibold text-gray-300">
-                From Application:
-              </span>{" "}
-              <span className="text-gray-400">{accessLogs[0].appName}</span>
-            </p>
+            {accessLog && (
+              <>
+                <p>
+                  <span className="font-semibold text-gray-300">Time:</span>{" "}
+                  <span className="text-gray-400">
+                    {formatDate(new Date(accessLog[0].CreatedAt))}
+                  </span>
+                </p>
+                <p>
+                  <span className="font-semibold text-gray-300">
+                    From Application:
+                  </span>{" "}
+                  <span className="text-gray-400">
+                    {accessLog[0].Application.application_name}
+                  </span>
+                </p>
+              </>
+            )}
           </div>
           <div className="space-y-4">
-            {accessLogs.map((log) => (
+            {accessLog?.map((log) => (
               <div
-                key={log.id}
+                key={log.ID}
                 className="bg-gray-800 p-4 rounded-lg flex items-center space-x-4"
               >
                 <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center bg-gray-700 rounded-full">
@@ -210,14 +222,12 @@ export default function Home() {
                   </svg>
                 </div>
                 <div className="flex-grow">
-                  <p className="font-bold">{log.appName}</p>
-                  <p className="text-sm text-gray-400">
-                    {formatDate(log.timestamp)}
+                  <p className="font-bold">
+                    {log.Application.application_name}
                   </p>
-                </div>
-                <div className="text-right text-sm text-gray-500">
-                  <p>{log.ipAddress}</p>
-                  <p>{log.location}</p>
+                  <p className="text-sm text-gray-400">
+                    {formatDate(new Date(log.CreatedAt))}
+                  </p>
                 </div>
               </div>
             ))}

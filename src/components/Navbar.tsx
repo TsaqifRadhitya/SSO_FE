@@ -39,7 +39,6 @@ const Navbar = ({ auth }: { auth: authType | undefined }) => {
 
     pathName === "/" && setPathName("HOME");
   }, [pathName]);
-  console.log(auth?.user)
   return (
     <header className="fixed top-0 left-0 right-0 bg-gray-800 shadow-lg z-50 border-b border-gray-700">
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-8">
