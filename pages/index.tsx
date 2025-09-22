@@ -172,7 +172,7 @@ export default function Home() {
             <h3 className="text-lg font-bold text-cyan-400 mb-3">
               Last Login Activity
             </h3>
-            {accessLog && (
+            {accessLog && accessLog.length > 0 && (
               <>
                 <p>
                   <span className="font-semibold text-gray-300">Time:</span>{" "}
