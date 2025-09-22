@@ -35,7 +35,7 @@ export default function LoginPage({
     password: "",
   });
   const { setNotification } = useNotification();
-  const { Login, auth } = useAuth(true);
+  const { Login, auth, isloading } = useAuth(true);
   const [err, setErr] = useState<ErrorMapper<z.infer<typeof LoginValidator>>>();
   const [isSubmited, setSubmited] = useTransition();
 
@@ -54,7 +54,12 @@ export default function LoginPage({
   }, [login]);
 
   useEffect(() => {
-    if (auth?.status && application_key === "" && callback_url === "") {
+    if (
+      !isloading &&
+      auth?.status &&
+      application_key === "" &&
+      callback_url === ""
+    ) {
       router.push("/");
     }
   }, [auth]);

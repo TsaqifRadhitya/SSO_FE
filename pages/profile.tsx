@@ -1,23 +1,23 @@
 import { useAuth } from "@/src/hooks/useAuth";
-import { useNotification } from "@/src/hooks/useNotification";
-import BaseLayout from "@/src/layouts/BaseLayout";
-import AutenticatedProvider from "@/src/providers/AutenticatedProvider";
+import AuthenticatedLayout from "@/src/layouts/AutenticatedLayout";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
 export default function ProfilePage() {
   const [isLoading, setLoading] = useState(false);
   const { Logout } = useAuth();
+  const router = useRouter()
 
   const logoutHandler = async () => {
     setLoading(true);
-    await Logout();
+    if(await Logout()){
+      router.replace("/login")
+    }
     setLoading(false);
   };
 
   return (
-    <AutenticatedProvider>
-      <BaseLayout>
+    <AuthenticatedLayout>
         <header className="w-full flex justify-between items-center space-x-4">
           <div>
             <h1 className="text-4xl font-bold text-white">Profile Account</h1>
@@ -30,7 +30,6 @@ export default function ProfilePage() {
             Log Out
           </button>
         </header>
-      </BaseLayout>
-    </AutenticatedProvider>
+    </AuthenticatedLayout>
   );
 }

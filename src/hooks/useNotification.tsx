@@ -1,8 +1,5 @@
 import { create } from "zustand";
-import {
-  NotificationType,
-  useNotificationHookInterface,
-} from "../types/Notification";
+import { useNotificationHookInterface } from "../types/Notification";
 
 export const useNotification = create<useNotificationHookInterface>((set) => ({
   notificationState: undefined,
@@ -14,8 +11,11 @@ export const useNotification = create<useNotificationHookInterface>((set) => ({
       },
     }),
   removeNotificaton: () => set({ notificationState: undefined }),
-  setAppear: (data) => set({notificationState : {
-    isAppear : true,
-    notification : data.notification
-  }}),
+  setAppear: (data) =>
+    set({
+      notificationState: {
+        isAppear: true,
+        notification: data.notification,
+      },
+    }),
 }));

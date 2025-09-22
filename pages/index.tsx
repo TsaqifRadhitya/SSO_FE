@@ -1,13 +1,10 @@
 "use client";
 
 import { useAuth } from "@/src/hooks/useAuth";
-import { useNotification } from "@/src/hooks/useNotification";
-import BaseLayout from "@/src/layouts/BaseLayout";
-import AutenticatedProvider from "@/src/providers/AutenticatedProvider";
 import { formatDate } from "@/src/utils/DateFormaterUtils";
+import AuthenticatedLayout from "@/src/layouts/AutenticatedLayout";
 import Head from "next/head";
-import { useRouter } from "next/router";
-import React, { useState } from "react";
+import React from "react";
 
 const connectedApps = [
   {
@@ -119,118 +116,114 @@ export default function Home() {
     : auth?.user?.name.substring(0, 1);
 
   return (
-    <AutenticatedProvider>
-      <BaseLayout className="text-white flex flex-col items-center">
-        <Head>
-          <title>SSO - Home Page</title>
-        </Head>
-        <div className="w-full mt-8">
-          <section className="bg-gray-800 rounded-xl shadow-2xl p-8 flex flex-col items-center text-center">
-            <div className="w-24 h-24 rounded-full bg-gray-700 flex items-center justify-center mb-4">
-              <p className="text-4xl font-bold w-fit h-fit">{icon}</p>
-            </div>
-            <h1 className="text-3xl font-bold text-white">
-              {auth?.user?.name}
-            </h1>
-            <p className="text-gray-400 mt-2">{auth?.user?.email}</p>
-            <p className="text-gray-400 mt-1">{auth?.user?.phone}</p>
-          </section>
-          <section className="mt-12">
-            <h2 className="text-2xl font-semibold mb-6 text-left">
-              Connected Applications
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {connectedApps.map((app) => (
-                <div
-                  key={app.id}
-                  className="bg-gray-800 p-6 rounded-lg shadow-lg hover:shadow-cyan-500/20 hover:scale-105 transition-all duration-300 flex flex-col"
-                >
-                  <div className="flex items-center mb-4">
-                    <div className="w-10 h-10 flex items-center justify-center bg-gray-700 rounded-full mr-4">
-                      {app.icon}
-                    </div>
-                    <h3 className="text-xl font-bold">{app.name}</h3>
+    <AuthenticatedLayout className="text-white flex flex-col items-center">
+      <Head>
+        <title>SSO - Home Page</title>
+      </Head>
+      <div className="w-full mt-8">
+        <section className="bg-gray-800 rounded-xl shadow-2xl p-8 flex flex-col items-center text-center">
+          <div className="w-24 h-24 rounded-full bg-gray-700 flex items-center justify-center mb-4">
+            <p className="text-4xl font-bold w-fit h-fit">{icon}</p>
+          </div>
+          <h1 className="text-3xl font-bold text-white">{auth?.user?.name}</h1>
+          <p className="text-gray-400 mt-2">{auth?.user?.email}</p>
+          <p className="text-gray-400 mt-1">{auth?.user?.phone}</p>
+        </section>
+        <section className="mt-12">
+          <h2 className="text-2xl font-semibold mb-6 text-left">
+            Connected Applications
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {connectedApps.map((app) => (
+              <div
+                key={app.id}
+                className="bg-gray-800 p-6 rounded-lg shadow-lg hover:shadow-cyan-500/20 hover:scale-105 transition-all duration-300 flex flex-col"
+              >
+                <div className="flex items-center mb-4">
+                  <div className="w-10 h-10 flex items-center justify-center bg-gray-700 rounded-full mr-4">
+                    {app.icon}
                   </div>
-                  <p className="text-gray-400 text-sm flex-grow">
-                    {app.description}
-                  </p>
-                  <a
-                    href="#"
-                    className="mt-4 text-blue-400 hover:text-blue-300 self-start"
+                  <h3 className="text-xl font-bold">{app.name}</h3>
+                </div>
+                <p className="text-gray-400 text-sm flex-grow">
+                  {app.description}
+                </p>
+                <a
+                  href="#"
+                  className="mt-4 text-blue-400 hover:text-blue-300 self-start"
+                >
+                  Go to App &rarr;
+                </a>
+              </div>
+            ))}
+          </div>
+        </section>
+        <section className="mt-12">
+          <h2 className="text-2xl font-semibold mb-6 text-left">
+            Recent SSO Access
+          </h2>
+          <div className="bg-gray-800 rounded-lg p-6 mb-8 shadow-lg border border-cyan-500/30">
+            <h3 className="text-lg font-bold text-cyan-400 mb-3">
+              Last Login Activity
+            </h3>
+            <p>
+              <span className="font-semibold text-gray-300">Time:</span>{" "}
+              <span className="text-gray-400">
+                {formatDate(accessLogs[0].timestamp)}
+              </span>
+            </p>
+            <p>
+              <span className="font-semibold text-gray-300">
+                From Application:
+              </span>{" "}
+              <span className="text-gray-400">{accessLogs[0].appName}</span>
+            </p>
+          </div>
+          <div className="space-y-4">
+            {accessLogs.map((log) => (
+              <div
+                key={log.id}
+                className="bg-gray-800 p-4 rounded-lg flex items-center space-x-4"
+              >
+                <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center bg-gray-700 rounded-full">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="text-gray-400"
                   >
-                    Go to App &rarr;
-                  </a>
+                    <rect
+                      x="3"
+                      y="11"
+                      width="18"
+                      height="11"
+                      rx="2"
+                      ry="2"
+                    ></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                  </svg>
                 </div>
-              ))}
-            </div>
-          </section>
-          <section className="mt-12">
-            <h2 className="text-2xl font-semibold mb-6 text-left">
-              Recent SSO Access
-            </h2>
-            <div className="bg-gray-800 rounded-lg p-6 mb-8 shadow-lg border border-cyan-500/30">
-              <h3 className="text-lg font-bold text-cyan-400 mb-3">
-                Last Login Activity
-              </h3>
-              <p>
-                <span className="font-semibold text-gray-300">Time:</span>{" "}
-                <span className="text-gray-400">
-                  {formatDate(accessLogs[0].timestamp)}
-                </span>
-              </p>
-              <p>
-                <span className="font-semibold text-gray-300">
-                  From Application:
-                </span>{" "}
-                <span className="text-gray-400">{accessLogs[0].appName}</span>
-              </p>
-            </div>
-            <div className="space-y-4">
-              {accessLogs.map((log) => (
-                <div
-                  key={log.id}
-                  className="bg-gray-800 p-4 rounded-lg flex items-center space-x-4"
-                >
-                  <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center bg-gray-700 rounded-full">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="20"
-                      height="20"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="text-gray-400"
-                    >
-                      <rect
-                        x="3"
-                        y="11"
-                        width="18"
-                        height="11"
-                        rx="2"
-                        ry="2"
-                      ></rect>
-                      <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                    </svg>
-                  </div>
-                  <div className="flex-grow">
-                    <p className="font-bold">{log.appName}</p>
-                    <p className="text-sm text-gray-400">
-                      {formatDate(log.timestamp)}
-                    </p>
-                  </div>
-                  <div className="text-right text-sm text-gray-500">
-                    <p>{log.ipAddress}</p>
-                    <p>{log.location}</p>
-                  </div>
+                <div className="flex-grow">
+                  <p className="font-bold">{log.appName}</p>
+                  <p className="text-sm text-gray-400">
+                    {formatDate(log.timestamp)}
+                  </p>
                 </div>
-              ))}
-            </div>
-          </section>
-        </div>
-      </BaseLayout>
-    </AutenticatedProvider>
+                <div className="text-right text-sm text-gray-500">
+                  <p>{log.ipAddress}</p>
+                  <p>{log.location}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
+    </AuthenticatedLayout>
   );
 }

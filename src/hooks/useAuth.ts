@@ -7,7 +7,6 @@ import { UserRepository } from "../repository/UserRepository"
 import { create } from "zustand"
 import { ErrorMapper } from "../utils/ErroMapper";
 import { useNotification } from "./useNotification";
-import { useRouter } from "next/router";
 
 export type authType = {
     status: boolean,
@@ -16,36 +15,33 @@ export type authType = {
 
 interface userUserInterface {
     auth: authType | undefined
-    isFinish: boolean
+    isLogOut: boolean
     setUser: (user: UserType) => void
     resetUser: () => void
     setAuth: (auth: authType) => void
 }
 
-const useUser = create<userUserInterface>((state) => {
+const useUser = create<userUserInterface>((set) => {
     return {
         auth: undefined,
-        setUser: (user) => state((prev) => ({
+        setUser: (user) => set((prev) => ({
             auth: {
                 ...prev.auth as authType, user
             }
         })),
-        isFinish: true,
-        setAuth: (auth: authType) => state({ auth, isFinish: true }),
-        resetUser: () => state((prev) => ({
-            auth: undefined, isFinish: true
-        }))
+        isLogOut: false,
+        setAuth: (auth: authType) => set({ auth }),
+        resetUser: () => set({
+            auth: undefined,
+            isLogOut: true  // Corrected this line
+        })
     }
 })
 
 export const useAuth = (initial?: boolean) => {
-    const { auth, setAuth, isFinish, resetUser } = useUser()
-
+    const { auth, setAuth, isLogOut, resetUser } = useUser()
     const { setNotification } = useNotification();
-    const router = useRouter();
-
     const [redirectUrl, setRedirectUrl] = useState<string>()
-
     const [isloading, setLoading] = useState<boolean>(false)
 
     const autRepository = new AuthRepository()
@@ -57,7 +53,7 @@ export const useAuth = (initial?: boolean) => {
             setAuth({
                 status: true,
                 user: data
-            })
+            });
         } catch {
             setAuth({ status: false });
         }
@@ -65,8 +61,15 @@ export const useAuth = (initial?: boolean) => {
 
     useEffect(() => {
         if (initial && !auth) {
-            setLoading(true)
-            fetchUser().then(() => setLoading(false))
+            const intialFetcth = async () => {
+                setLoading(true)
+                try {
+                    await fetchUser()
+                } finally {
+                    setLoading(false)
+                }
+            }
+            intialFetcth()
         }
     }, [initial]);
 
@@ -105,7 +108,6 @@ export const useAuth = (initial?: boolean) => {
                 message: "Successfully logged out",
                 type: "Success",
             });
-            await router.push("/login");
             resetUser()
             return true
         } catch {
@@ -118,6 +120,6 @@ export const useAuth = (initial?: boolean) => {
     }
 
     return {
-        auth, Login, Logout, SSO, redirectUrl, isloading, isFinish
+        auth, Login, Logout, SSO, redirectUrl, isloading, isLogOut
     }
 }

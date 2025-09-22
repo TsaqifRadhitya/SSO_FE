@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, ReactNode, useState, useLayoutEffect } from "react";
+import React, { useEffect, ReactNode } from "react";
 import { useNotification } from "../hooks/useNotification";
 import { usePathname } from "next/navigation";
 
