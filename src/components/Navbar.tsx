@@ -5,11 +5,10 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { cn } from "../utils/Cn";
 import { authType } from "../hooks/useAuth";
+import { getInitials } from "../utils/getIntials";
 
-const Navbar = ({ auth }: { auth: authType | undefined }) => {
-  const icon = auth?.user?.name.includes(" ")
-    ? [auth?.user.name.split(" ")[0], auth?.user.name.split(" ")[1]].join("")
-    : auth?.user?.name.substring(0, 1);
+const Navbar = ({ auth,className }: { auth: authType | undefined,className : string }) => {
+  const icon = getInitials(auth?.user?.name)
 
   const pathName = usePathname();
   const [pathNameState, setPathName] = useState<
@@ -40,7 +39,7 @@ const Navbar = ({ auth }: { auth: authType | undefined }) => {
     pathName === "/" && setPathName("HOME");
   }, [pathName]);
   return (
-    <header className="fixed top-0 left-0 right-0 bg-gray-800 shadow-lg z-50 border-b border-gray-700">
+    <header className={cn("fixed top-0 left-0 right-0 bg-gray-800 shadow-lg z-50 border-b border-gray-700",className)}>
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-8">
         <div className="flex items-center justify-between h-16">
           <Link

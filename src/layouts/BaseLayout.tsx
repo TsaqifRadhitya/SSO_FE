@@ -4,6 +4,14 @@ import Navbar from "../components/Navbar";
 import { useAuth } from "../hooks/useAuth";
 import NotificationProvider from "../providers/NotificationProvider";
 import { cn } from "../utils/Cn";
+import { Montserrat } from "next/font/google";
+
+const montserrat = Montserrat({
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+  subsets: ["latin"],
+  display: "swap",
+  fallback: ["Arial", "sans-serif"],
+});
 
 export default function BaseLayout({
   className,
@@ -14,7 +22,7 @@ export default function BaseLayout({
 }>) {
   const { auth } = useAuth();
   return (
-    <NotificationProvider>
+    <NotificationProvider className={montserrat.className}>
       <div
         className="absolute bg-fixed inset-0 z-[-1]"
         style={{
@@ -26,9 +34,13 @@ export default function BaseLayout({
         `,
         }}
       />
-      {<Navbar auth={auth} />}
+      {<Navbar className={montserrat.className} auth={auth} />}
       <main
-        className={cn("py-28 px-36 w-full min-h-screen bg-fixed", className)}
+        className={cn(
+          "py-28 px-36 w-full min-h-screen bg-fixed",
+          className,
+          montserrat.className
+        )}
       >
         {children}
       </main>

@@ -3,23 +3,39 @@ import { ApplicationType } from "../types/Application";
 import { ApplicationRepository } from "../repository/ApplicationRepository";
 import { useRouter } from "next/router";
 import { useAuth } from "./useAuth";
+import { create } from "zustand";
+import { GlobalActionType } from "../types/GlobalStateAction";
+
+interface useApplicationInterface {
+    state: GlobalActionType<ApplicationType> | undefined
+    reset: () => void
+    openModal: (application: ApplicationType, type: "Detail" | "Delete" | "Update") => void
+    setLoading: () => void
+    setSucccess: () => void
+    setFailed: () => void
+}
+
+export const useApplcationAction = create<useApplicationInterface>((state) => ({
+    openModal: (application, type) => state({ state: { data: application, modalType: type } }),
+    reset: () => state({ state: undefined }),
+    setFailed: () => state((prev) => ({ ...prev, state: { ...prev.state as GlobalActionType<ApplicationType>, action: "Failed" } })),
+    setLoading: () => state((prev) => ({ ...prev, state: { ...prev.state as GlobalActionType<ApplicationType>, action: "Loading" } })),
+    setSucccess: () => state((prev) => ({ ...prev, state: { ...prev.state as GlobalActionType<ApplicationType>, action: "Success" } })),
+    state: undefined
+}))
 
 export const useApplication = (id?: string) => {
     const [application, setApplication] = useState<ApplicationType | undefined>()
-
     const [applications, setApplications] = useState<ApplicationType[] | undefined>()
-
     const [isLoading, setLoading] = useState<boolean>()
 
     const applicationRepository = new ApplicationRepository()
-
     const router = useRouter()
-
     const { auth } = useAuth()
 
     useEffect(() => {
         const fetch = async () => {
-            if(!auth) return
+            if (!auth) return
             if (id && auth.status) {
                 try {
                     setLoading(true)
@@ -41,7 +57,7 @@ export const useApplication = (id?: string) => {
             }
         }
         fetch()
-    }, [id,auth])
+    }, [id, auth])
 
     const Delete = async (id: number): Promise<boolean> => {
         return false

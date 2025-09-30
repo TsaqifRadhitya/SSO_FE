@@ -1,4 +1,7 @@
-import { useApplication } from "@/src/hooks/useApplication";
+import {
+  useApplcationAction,
+  useApplication,
+} from "@/src/hooks/useApplication";
 import AutenticatedProvider from "@/src/layouts/AutenticatedLayout";
 import { ApplicationType } from "@/src/types/Application";
 import { formatDate } from "@/src/utils/DateFormaterUtils";
@@ -11,6 +14,7 @@ import { useState } from "react";
 export default function ApplicationPage() {
   const [searchTerm, setSearchTerm] = useState<string>();
   const { applications } = useApplication();
+  const { state } = useApplcationAction();
   const filteredData = useMemo(() => {
     if (!searchTerm) return applications;
     return applications?.filter((app) =>

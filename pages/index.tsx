@@ -5,7 +5,8 @@ import { formatDate } from "@/src/utils/DateFormaterUtils";
 import AuthenticatedLayout from "@/src/layouts/AutenticatedLayout";
 import Head from "next/head";
 import React from "react";
-import { useUser } from "@/src/hooks/userUser";
+import { useUser } from "@/src/hooks/useUser";
+import { getInitials } from "@/src/utils/getIntials";
 
 const connectedApps = [
   {
@@ -112,9 +113,7 @@ export default function Home() {
   const { auth } = useAuth();
   const { accessLog, connectedApplication } = useUser();
 
-  const icon = auth?.user?.name.includes(" ")
-    ? [auth?.user?.name.split(" ")[0], auth?.user?.name.split(" ")[1]].join("")
-    : auth?.user?.name.substring(0, 1);
+  const icon = getInitials(auth?.user?.name)
 
   return (
     <AuthenticatedLayout className="text-white flex flex-col items-center">

@@ -3,8 +3,9 @@
 import React, { useEffect, ReactNode } from "react";
 import { useNotification } from "../hooks/useNotification";
 import { usePathname } from "next/navigation";
+import { cn } from "../utils/Cn";
 
-const NotificationProvider = ({ children }: { children: ReactNode }) => {
+const NotificationProvider = ({ children, className}: { children: ReactNode, className? : string }) => {
   const { notificationState, removeNotificaton, setAppear } = useNotification();
 
   const pathName = usePathname();
@@ -30,7 +31,7 @@ const NotificationProvider = ({ children }: { children: ReactNode }) => {
     <>
       {children}
       {notificationState?.isAppear && (
-        <div className="fixed top-5 right-5 z-50 max-w-xs w-full bg-white text-gray-800 shadow-lg border border-gray-200 rounded-lg p-4">
+        <div className={cn("fixed top-5 right-5 z-50 max-w-xs w-full bg-white text-gray-800 shadow-lg border border-gray-200 rounded-lg p-4",className)}>
           <div className="flex items-start space-x-3">
             <div>
               {notificationState.notification.type === "Success" && (

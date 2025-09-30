@@ -15,7 +15,7 @@ const AuthenticatedLayout = ({
   const router = useRouter();
 
   useLayoutEffect(() => {
-    if (!isloading && !auth?.status) {
+    if (!isloading && auth?.status === false) {
       router.push("/login");
     }
   }, [isloading, auth, router]);
@@ -26,7 +26,12 @@ const AuthenticatedLayout = ({
 
   if (isloading && !isLogOut) {
     return (
-      <BaseLayout className={cn("flex h-screen flex-col items-center justify-center text-center",className)}>
+      <BaseLayout
+        className={cn(
+          "flex h-screen flex-col items-center justify-center text-center",
+          className
+        )}
+      >
         <div className="animate-pulse">
           <h1 className="mt-4 text-xl font-bold text-white">
             Memverifikasi Sesi...

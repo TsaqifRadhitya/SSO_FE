@@ -45,7 +45,6 @@ export abstract class BaseRepository {
         if (BaseRepository.token) {
             headers["Authorization"] = `Bearer ${BaseRepository.token}`;
         }
-
         try {
             switch (method) {
                 case "GET":

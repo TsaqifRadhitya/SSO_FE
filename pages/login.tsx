@@ -5,41 +5,19 @@ import { useAuth } from "@/src/hooks/useAuth";
 import z from "zod";
 import { useRouter } from "next/router";
 import { useNotification } from "@/src/hooks/useNotification";
-import { GetServerSideProps } from "next";
 import Head from "next/head";
-import BaseLayout from "@/src/layouts/BaseLayout";
-import { ErrorMapper } from "@/src/utils/ErroMapper";
+import { ErrorMapper } from "@/src/utils/ErrorMapper";
+import Link from "next/link";
+import GuestLayout from "@/src/layouts/GuestLayout";
 
-type loginServerSidePropsType = {
-  application_key?: string;
-  callback_url?: string;
-};
-
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const { application_key, callback_url } = ctx.query;
-
-  return {
-    props: {
-      application_key: application_key ?? "",
-      callback_url: callback_url ?? "",
-    },
-  };
-};
-
-export default function LoginPage({
-  application_key,
-  callback_url,
-}: loginServerSidePropsType) {
-  const [login, setLogin] = useState({
-    email: "",
-    password: "",
-  });
+export default function LoginPage() {
+  const [login, setLogin] = useState({ email: "", password: "" });
   const { setNotification } = useNotification();
-  const { Login, auth, isloading } = useAuth(true);
+  const { Login } = useAuth();
   const [err, setErr] = useState<ErrorMapper<z.infer<typeof LoginValidator>>>();
   const [isSubmited, setSubmited] = useTransition();
-
   const router = useRouter();
+  const { application_key, callback_url } = router.query;
 
   const submitByEnter = (e: KeyboardEvent) => {
     if (e.key === "Enter") {
@@ -53,17 +31,6 @@ export default function LoginPage({
     return () => document.removeEventListener("keypress", submitByEnter);
   }, [login]);
 
-  useEffect(() => {
-    if (
-      !isloading &&
-      auth?.status &&
-      application_key === "" &&
-      callback_url === ""
-    ) {
-      router.push("/");
-    }
-  }, [auth]);
-
   const handleLogin = () => {
     setSubmited(async () => {
       const result = await Login(login);
@@ -76,7 +43,7 @@ export default function LoginPage({
       }
 
       setErr(undefined);
-      if (application_key !== "" && callback_url !== "") {
+      if (application_key && callback_url) {
         setNotification({ message: "Redirect To SSO", type: "Info" });
         router.push(
           `/sso?application_key=${application_key}&&callback_url=${callback_url}`
@@ -88,7 +55,7 @@ export default function LoginPage({
   };
 
   return (
-    <BaseLayout className="flex items-center justify-center p-4">
+    <GuestLayout className="flex items-center justify-center p-4">
       <Head>
         <title>SSO - Login Page</title>
       </Head>
@@ -137,15 +104,27 @@ export default function LoginPage({
             )}
           </div>
         </form>
-
-        <button
-          className="w-full rounded-lg bg-blue-600 hover:bg-blue-700 flex justify-center items-center shadow-lg p-3 text-white font-bold text-lg transition-colors duration-200 disabled:bg-blue-800/50 cursor-pointer disabled:cursor-not-allowed"
-          disabled={isSubmited}
-          onClick={handleLogin}
-        >
-          {isSubmited ? <Spinner size={2} /> : "Login"}
-        </button>
+        <div>
+          <div className="flex gap-1 justify-end text-sm font-light mb-5">
+            <Link className="font-[500]" href={"/forgot_password"}>
+              Lupa akun ?
+            </Link>
+          </div>
+          <button
+            className="w-full rounded-lg bg-blue-600 hover:bg-blue-700 flex justify-center items-center shadow-lg p-3 text-white font-bold text-lg transition-colors duration-200 disabled:bg-blue-800/50 cursor-pointer disabled:cursor-not-allowed"
+            disabled={isSubmited}
+            onClick={handleLogin}
+          >
+            {isSubmited ? <Spinner size={2} /> : "Login"}
+          </button>
+          <div className="flex gap-1 justify-center text-sm font-light mt-5">
+            <p>Belum punya akun ? </p>
+            <Link className="font-[500]" href={"/register"}>
+              Register
+            </Link>
+          </div>
+        </div>
       </div>
-    </BaseLayout>
+    </GuestLayout>
   );
 }
