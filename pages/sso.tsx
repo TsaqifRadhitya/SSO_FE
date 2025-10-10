@@ -11,9 +11,9 @@ export default function SSOPage() {
   const { SSO, redirectUrl, ssoStep, auth } = useAuth(true);
   const router = useRouter();
 
-  const { application_key, callback_url } = router.query;
   useEffect(() => {
     if (!router.isReady) return;
+    const { application_key, callback_url } = router.query;
     if (auth?.status === false) {
       if (application_key && callback_url) {
         router.replace(
@@ -31,7 +31,7 @@ export default function SSOPage() {
     if (ssoStep === "Initial") {
       SSO(application_key as string, callback_url as string);
     }
-  }, [redirectUrl, application_key, callback_url, ssoStep, auth]);
+  }, [redirectUrl, ssoStep, auth]);
 
   if (redirectUrl && ssoStep === "Valid") {
     return (
