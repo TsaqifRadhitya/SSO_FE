@@ -2,119 +2,52 @@
 
 import Spinner from "@/src/components/Spinner";
 import { useAuth } from "@/src/hooks/useAuth";
-import { Response } from "@/src/types/getServerSidePropsReturn";
-import { UserType } from "@/src/types/User";
-import Axios from "@/src/utils/axios";
-import { authenticatedServerFetch } from "@/src/utils/fetch";
-import { GetServerSideProps } from "next";
+import BaseLayout from "@/src/layouts/BaseLayout";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 
-type SSOServerSideProps = {
-  ssoCredential?: {
-    application_key: string;
-    callback_url: string;
-  };
-  status: boolean;
-};
-
-export const getServerSideProps: GetServerSideProps<
-  Response<{ data: SSOServerSideProps }>
-> = async (ctx) => {
-  try {
-    const ress = await authenticatedServerFetch<UserType>(
-      ctx,
-      "api/user",
-      "GET"
-    );
-    const application_key = Array.isArray(ctx.query.application_key)
-      ? ctx.query.application_key[0]
-      : ctx.query.application_key ?? "";
-
-    const callback_url = Array.isArray(ctx.query.callback_url)
-      ? ctx.query.callback_url[0]
-      : ctx.query.callback_url ?? "";
-
-    if (!application_key && !callback_url) {
-      return {
-        props: {
-          data: {
-            status: false,
-          },
-          token: ress.token,
-        },
-      };
-    }
-    try {
-      await Axios.post("/api/auth/verify_access", {
-        application_key,
-        callback_url,
-      });
-      return {
-        props: {
-          data: {
-            ssoCredential: {
-              application_key,
-              callback_url,
-            },
-            status: true,
-          },
-          token: ress.token,
-        },
-      };
-    } catch {
-      return {
-        props: {
-          data: {
-            status: false,
-          },
-          token: ress.token,
-        },
-      };
-    }
-  } catch {
-    return {
-      redirect: {
-        destination: "/login",
-        permanent: false,
-      },
-    };
-  }
-};
-
-export default function SSOPage({
-  data: { status, ssoCredential },
-}: Response<{ data: SSOServerSideProps }>) {
-  const { SSO, redirectUrl } = useAuth();
+export default function SSOPage() {
+  const { SSO, redirectUrl, ssoStep, auth } = useAuth(true);
   const router = useRouter();
 
+  const { application_key, callback_url } = router.query;
+
   useEffect(() => {
-    if (redirectUrl) {
+    if (auth?.status === false) {
+      if (application_key && callback_url) {
+        router.replace(
+          `/login?callback_url=${callback_url}&application_key=${application_key}`
+        );
+        return;
+      }
+      router.replace("/login");
+    }
+    if (redirectUrl && ssoStep === "Valid") {
       router.push(redirectUrl);
       return;
     }
 
-    if (status && ssoCredential) {
-      SSO(ssoCredential.application_key, ssoCredential.callback_url);
+    if (application_key && callback_url && ssoStep === "Initial") {
+      SSO(application_key as string, callback_url as string);
     }
-  }, [redirectUrl, status, ssoCredential, SSO, router]);
+  }, [redirectUrl, application_key, callback_url, ssoStep, auth]);
 
-  if (redirectUrl) {
+  if (redirectUrl && ssoStep === "Valid") {
     return (
-      <main className="min-h-screen w-full flex flex-col items-center justify-center text-white p-4">
+      <BaseLayout className="min-h-screen w-full flex flex-col items-center justify-center text-white p-4">
         <Spinner size={3} />
         <h1 className="text-2xl font-bold mt-6">Redirecting</h1>
         <p className="text-gray-400">
           Please wait while we securely redirect you...
         </p>
-      </main>
+      </BaseLayout>
     );
   }
 
-  if (!status || !ssoCredential) {
+  if (ssoStep === "Invalid") {
     return (
-      <main className="min-h-screen w-full flex flex-col items-center justify-center text-white p-4">
+      <BaseLayout className="min-h-screen w-full flex flex-col items-center justify-center text-white p-4">
         <div className="text-center">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -138,12 +71,12 @@ export default function SSOPage({
             request is invalid.
           </p>
         </div>
-      </main>
+      </BaseLayout>
     );
   }
 
   return (
-    <main className="min-h-screen w-full flex flex-col items-center justify-center text-white p-4">
+    <BaseLayout className="min-h-screen w-full flex flex-col items-center justify-center text-white p-4">
       <Head>
         <title>SSO - Authenticating...</title>
       </Head>
@@ -152,6 +85,6 @@ export default function SSOPage({
       <p className="text-gray-400">
         Please wait while we verify your credentials...
       </p>
-    </main>
+    </BaseLayout>
   );
 }

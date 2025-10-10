@@ -46,6 +46,7 @@ export const useAuth = (initial?: boolean) => {
     const { setNotification } = useNotification();
     const [redirectUrl, setRedirectUrl] = useState<string>()
     const [isloading, setLoading] = useState<boolean>(false)
+    const [ssoStep, setSSOStep] = useState<"Initial" | "Valid" | "Invalid">("Initial")
 
     const authRepository = new AuthRepository()
     const userRepository = new UserRepository()
@@ -73,11 +74,18 @@ export const useAuth = (initial?: boolean) => {
         }
     }, [initial, auth]);
 
-    const SSO = async (application_key: string, callback_url: string) => {
+    const SSO = async (application_key?: string, callback_url?: string) => {
+        if (ssoStep !== "Initial") return
+        if (!application_key || !callback_url) {
+            setSSOStep("Invalid")
+            return
+        }
         try {
             const SSOCallbackUrl = await authRepository.SSO(callback_url, application_key)
             setRedirectUrl(SSOCallbackUrl)
+            setSSOStep("Valid")
         } catch {
+            setSSOStep("Invalid")
         }
     }
 
@@ -191,6 +199,6 @@ export const useAuth = (initial?: boolean) => {
     }
 
     return {
-        auth, Login, Register,setNewPassword, Logout, forgotPassword, verifyResetPassword, SSO, redirectUrl, isloading, isLogOut
+        auth, Login, Register, setNewPassword, Logout, forgotPassword, verifyResetPassword, SSO, redirectUrl, isloading, isLogOut, ssoStep
     }
 }

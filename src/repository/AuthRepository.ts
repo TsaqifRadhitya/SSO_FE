@@ -21,7 +21,6 @@ export class AuthRepository extends BaseRepository {
             await Axios.post("/api/auth/register", { ...param }, {
                 withCredentials: true
             })
-            await this.ensureToken()
         } catch (e: unknown) {
             throw new BadRequestException(e)
         }
@@ -36,7 +35,6 @@ export class AuthRepository extends BaseRepository {
     }
 
     async SSO(callback_url: string, application_key: string): Promise<string> {
-        await this.ensureToken()
         return this.authenticatedClientFetch<string>("/api/auth/sso", "POST", {
             callback_url,
             application_key

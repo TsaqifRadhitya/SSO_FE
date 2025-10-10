@@ -63,7 +63,7 @@ const Navbar = ({ auth,className }: { auth: authType | undefined,className : str
             <span className="text-xl font-bold text-white">SSO</span>
           </Link>
 
-          {auth?.status && auth.user && (
+          {auth?.status && auth.user && !pathName.startsWith("/sso") && (
             <>
               <nav className="hidden md:flex items-center space-x-4">
                 <Link
